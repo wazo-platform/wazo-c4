@@ -1,0 +1,74 @@
+version: '2'
+services:
+  consul:
+    image: consul:1.6
+    ports:
+    - '8300:8300'
+    - '8500:8500'
+    - '8600:8600'
+    volumes:
+    - ./data/consul:/data
+    - ./config:/config
+    command: agent -server -data-dir=/data -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
+  postgresql:
+    image: postgres:11
+    ports:
+    - '5432:5432'
+    volumes:
+    - ./data/pgsql:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: wazo
+      POSTGRES_PASSWORD: wazo
+      POSTGRES_DB: wazo
+  router-confd:
+    image: wazopbx/wazo-router-confd:latest
+    ports:
+    - 8000:8000
+    command: sh -c "
+      date
+      && wait-for -t 60 postgresql:5432
+      && wait-for -t 60 consul:8500
+      && sleep 15
+      && wazo-router-confd --host 0.0.0.0 --port 8000 --consul-uri http://consul:8500 --database-uri postgresql://wazo:wazo@postgresql:5432/wazo
+      && date"
+  rtpe:
+    image: wazopbx/wazo-rtpe:latest
+  sbc:
+    image: 'wazopbx/wazo-c4-sbc:latest'
+    ports:
+    - "5060:5060/udp"
+    environment:
+      LISTEN: udp:eth0:5060
+    command: sh -c "
+      date
+      && wait-for -t 60 router-confd:8000
+      && /docker-entrypoint.sh
+      && sleep 5000
+      && date"
+  router:
+    image: 'wazopbx/wazo-c4-router:latest'
+    ports:
+    - "5061:5061/udp"
+    environment:
+      RTPENGINE_LIST: udp:rtpe:22222
+      HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
+      HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
+      HTTP_API_TIMEOUT: 5000
+      LISTEN: udp:eth0:5061
+    command: sh -c "
+      date
+      && wait-for -t 60 router-confd:8000
+      && /docker-entrypoint.sh
+      && sleep 5000
+      && date"
+  carrier:
+    image: 'wazopbx/wazo-c4-carrier:latest'
+    entrypoint: 'sipp -sf /scenarios/uas.xml'
+  wazo-tester:
+    image: 'wazopbx/wazo-tester:latest'
+    environment:
+      API_ENDPOINT: http://router-confd:8000
+      TARGET: sbc:5060
+    volumes:
+    - "./tests/:/tests/"
+    command: sh -c "while true; do sleep 30; done;"

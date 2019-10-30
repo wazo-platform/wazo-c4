@@ -1,0 +1,48 @@
+setup:
+  - type: api
+    uri: /tenants/
+    method: POST
+    store_response: tenant
+    payload:
+      name: tenant_{random.uuid4}
+  - type: api
+    uri: /domains/
+    method: POST
+    store_response: domain
+    payload:
+      domain: "{ipaddr.ip}"
+      tenant_id: "{tenant.id}"
+  - type: api
+    uri: /ipbx/
+    method: POST
+    store_response: ipbx
+    payload:
+      ip_fqdn: "{ipaddr.ip}"
+      ip_address: "{ipaddr.ip}"
+      tenant_id: "{tenant.id}"
+      domain_id: "{domain.id}"
+      customer: "{tenant.id}"
+      username: user
+      password: pass
+      registered: False
+
+teardown:
+  - type: api
+    method: DELETE
+    uri: "/tenants/{tenant.id}"
+    
+workers:
+  - scenario: "test_outbound_ko-no-carrier.xml"
+    number: 1
+    repeat: 2
+    timeout: 600
+    call_rate: 1
+    call_rate_period: 1000
+    call_limit: 1
+    call_number: 1
+    values:
+      call_duration: 1000
+      to_user: "39040123456"
+      to_domain: "anotherdomain.com"
+      to_port: "5060"
+      authentication: "[authentication username=user password=pass]"
