@@ -1,3 +1,11 @@
+.PHONY:
+venv:
+	virtualenv -p python3 venv --no-site-packages
+
+.PHONY: setup
+setup:
+	pip install -r requirements.txt
+
 .PHONY: test
 test:
 	docker exec wazo-c4_wazo-tester_1 pytest /tests/
