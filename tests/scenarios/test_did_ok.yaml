@@ -37,6 +37,7 @@ setup:
     store_response: carrier_trunk
     payload:
       name: carrier_trunk_{random.uuid4}
+      tenant_id: "{tenant.id}"
       carrier_id: "{carrier.id}"
       sip_proxy: proxy.somedomain.com
       ip_address: "{ipaddr.ip}"
@@ -62,7 +63,7 @@ teardown:
   - type: api
     method: DELETE
     uri: "/tenants/{tenant.id}"
-    
+
 workers:
   - scenario: "test_did_ok.xml"
     number: 1

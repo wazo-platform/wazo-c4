@@ -35,14 +35,14 @@
   <send>
   <![CDATA[
 
-    ACK [next_url] SIP/2.0
+    ACK sip:[service]@[remote_ip]:[remote_port] SIP/2.0
     [last_Via:]
     [last_From:]
     [last_To:]
     [routes]
     [last_Call-ID:]
     CSeq: [cseq] ACK
-    Contact: sip:sipp@[local_ip]:[local_port]
+    Contact: <sip:sipp@[local_ip]:[local_port];transport=[transport]>
     Max-Forwards: 70
     Subject: Test
     Content-Length: 0
