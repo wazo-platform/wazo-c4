@@ -37,6 +37,9 @@ services:
     image: 'wazopbx/wazo-c4-sbc:latest'
     ports:
     - "5060:5060/udp"
+    # volumes:
+    # - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    # - "../wazo-c4-sbc/docker-entrypoint.sh:/docker-entrypoint.sh"
     environment:
       LISTEN: udp:eth0:5060
     command: sh -c "
@@ -49,6 +52,12 @@ services:
     image: 'wazopbx/wazo-c4-router:latest'
     ports:
     - "5061:5061/udp"
+    # volumes:
+    # - "../wazo-c4-router/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    # - "../wazo-c4-router/kamailio/routing.cfg:/etc/kamailio/routing.cfg"
+    # - "../wazo-c4-router/kamailio/cdrs.cfg:/etc/kamailio/cdrs.cfg"
+    # - "../wazo-c4-router/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
+    # - "../wazo-c4-router/docker-entrypoint.sh:/docker-entrypoint.sh"
     environment:
       RTPENGINE_LIST: udp:rtpe:22222
       HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
@@ -64,6 +73,8 @@ services:
       && date"
   carrier:
     image: 'wazopbx/wazo-c4-carrier:latest'
+    # volumes:
+    # - "../wazo-c4-carrier/scenarios/:/scenarios/"
     entrypoint: 'sipp -sf /scenarios/uas.xml'
   wazo-tester:
     image: 'wazopbx/wazo-tester:latest'
