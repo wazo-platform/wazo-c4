@@ -1,0 +1,23 @@
+version: '2'
+services:
+  sbc:
+    volumes:
+    - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-sbc/docker-entrypoint.sh:/docker-entrypoint.sh"
+  sbc_secondary:
+    volumes:
+    - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-sbc/docker-entrypoint.sh:/docker-entrypoint.sh"
+  router:
+    volumes:
+    - "../wazo-c4-router/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-router/kamailio/routing.cfg:/etc/kamailio/routing.cfg"
+    - "../wazo-c4-router/kamailio/cdrs.cfg:/etc/kamailio/cdrs.cfg"
+    - "../wazo-c4-router/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
+    - "../wazo-c4-router/docker-entrypoint.sh:/docker-entrypoint.sh"
+  carrier:
+    volumes:
+    - "../wazo-c4-carrier/scenarios/:/scenarios/"
+  wazo-tester:
+    volumes:
+    - "./tests/:/tests/"
