@@ -4,7 +4,7 @@ from click.testing import CliRunner
 from wazotester import wazotester
 
 
-TARGET = "router:5061"
+TARGET = "sbc:5060"
 
 
 def test_did_ok():
