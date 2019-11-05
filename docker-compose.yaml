@@ -76,6 +76,25 @@ services:
       HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
       HTTP_API_TIMEOUT: 5000
       LISTEN: udp:eth0:5061
+      WITH_DMQ: 1
+      DMQ_PORT: 5062
+      DMQ_LISTEN: "udp:eth0:5062"
+      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
+      DMQ_NOTIFICATION_ADDRESS: "sip:router_secondary:5062"
+  router_secondary:
+    image: 'wazopbx/wazo-c4-router:latest'
+    environment:
+      RTPENGINE_LIST: udp:rtpe:22222
+      HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
+      HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
+      HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
+      HTTP_API_TIMEOUT: 5000
+      LISTEN: udp:eth0:5061
+      WITH_DMQ: 1
+      DMQ_PORT: 5062
+      DMQ_LISTEN: "udp:eth0:5062"
+      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
+      DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
     command: sh -c "
       date
       && wait-for -t 60 router-confd:8000
