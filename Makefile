@@ -21,3 +21,15 @@ black:
 .PHONY: pikeoff
 pikeoff:
 	docker exec -it wazo-c4_sbc_1 kamcmd pv.shvSet pike_off int 1
+
+.PHONY: run
+run:
+	docker-compose up -d
+
+.PHONY: run-dev
+run-dev:
+	docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
+
+.PHONY: stop
+stop:
+	docker-compose down
