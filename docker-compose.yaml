@@ -38,6 +38,7 @@ services:
     ports:
     - "5060:5060/udp"
     environment:
+      TESTING: 1
       LISTEN: udp:eth0:5060
       DISPATCHER_LIST: >-
         # setid(int) destination(sip uri) flags(int,opt) priority(int,opt) attributes(str,opt)\n
@@ -57,6 +58,7 @@ services:
   sbc_secondary:
     image: 'wazopbx/wazo-c4-sbc:latest'
     environment:
+      TESTING: 1
       LISTEN: udp:eth0:5060
       DISPATCHER_LIST: >-
         # setid(int) destination(sip uri) flags(int,opt) priority(int,opt) attributes(str,opt)\n
@@ -78,6 +80,7 @@ services:
     ports:
     - "5061:5061/udp"
     environment:
+      TESTING: 1
       ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
       RTPENGINE_LIST: udp:rtpe:22222
       HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
@@ -95,6 +98,7 @@ services:
   router_secondary:
     image: 'wazopbx/wazo-c4-router:latest'
     environment:
+      TESTING: 1
       ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
       RTPENGINE_LIST: udp:rtpe:22222
       HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
