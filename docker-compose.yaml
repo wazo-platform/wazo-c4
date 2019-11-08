@@ -41,8 +41,8 @@ services:
       LISTEN: udp:eth0:5060
       DISPATCHER_LIST: >-
         # setid(int) destination(sip uri) flags(int,opt) priority(int,opt) attributes(str,opt)\n
-        1 sip:router:5061 0 5\n
-        1 sip:router_secondary:5061 0 5
+        1 sip:router:5061 16 5\n
+        1 sip:router_secondary:5061 16 5
       WITH_DMQ: 1
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
@@ -85,6 +85,8 @@ services:
       HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
       HTTP_API_TIMEOUT: 5000
       LISTEN: udp:eth0:5061
+      LISTEN_ADVERTISE: router:5061
+      ALIAS: router_secondary:5061
       WITH_DMQ: 1
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
@@ -100,6 +102,8 @@ services:
       HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
       HTTP_API_TIMEOUT: 5000
       LISTEN: udp:eth0:5061
+      LISTEN_ADVERTISE: router_secondary:5061
+      ALIAS: router:5061
       WITH_DMQ: 1
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
