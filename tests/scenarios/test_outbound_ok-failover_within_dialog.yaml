@@ -1,0 +1,95 @@
+setup:
+  - type: api
+    uri: /tenants/
+    method: POST
+    store_response: tenant
+    payload:
+      name: tenant_{random.uuid4}
+  - type: api
+    uri: /domains/
+    method: POST
+    store_response: domain
+    payload:
+      domain: "{ipaddr.ip}"
+      tenant_id: "{tenant.id}"
+  - type: api
+    uri: /ipbx/
+    method: POST
+    store_response: ipbx
+    payload:
+      ip_fqdn: "{ipaddr.ip}"
+      ip_address: "{ipaddr.ip}"
+      tenant_id: "{tenant.id}"
+      domain_id: "{domain.id}"
+      customer: "{tenant.id}"
+      username: user
+      password: pass
+      registered: False
+  - type: api
+    uri: /carriers/
+    method: POST
+    store_response: carrier
+    payload:
+      name: carrier_{random.uuid4}
+      tenant_id: "{tenant.id}"
+  - type: api
+    uri: /carrier_trunks/
+    method: POST
+    store_response: carrier_trunk
+    payload:
+      name: carrier_trunk_{random.uuid4}
+      tenant_id: "{tenant.id}"
+      carrier_id: "{carrier.id}"
+      sip_proxy: carrier
+      registered: True
+      auth_username: user
+      auth_password: pass
+      realm: somerealm.com
+      registrar_proxy: registrar-proxy.com
+      from_domain: gw.somedomain.com
+      expire_seconds: 1800
+      retry_seconds: 10
+
+teardown:
+  - type: api
+    method: DELETE
+    uri: "/tenants/{tenant.id}"
+  - type: kamailio_xhttp
+    uri: http://router:8000/rpc
+    method: POST
+    payload:
+      jsonrpc: "2.0"
+      method: "pv.shvSet"
+      params:
+        name: "router_off"
+        type: "int"
+        value: 0
+      id: "1"
+
+workers:
+  - scenario: "test_outbound_ok-failover_within_dialog.xml"
+    number: 1
+    repeat: 2
+    timeout: 600
+    call_rate: 1
+    call_rate_period: 1000
+    call_limit: 1
+    call_number: 1
+    values:
+      call_duration: 10000
+      to_user: "39040123456"
+      to_domain: "anotherdomain.com"
+      to_port: "5060"
+      authentication: "[authentication username=user password=pass]"
+  - type: kamailio_xhttp
+    uri: http://router:8000/rpc
+    method: POST
+    delay: 5
+    payload:
+      jsonrpc: "2.0"
+      method: "pv.shvSet"
+      params:
+        name: "router_off"
+        type: "int"
+        value: 1
+      id: "1"
