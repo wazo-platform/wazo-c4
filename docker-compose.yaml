@@ -20,6 +20,8 @@ services:
       POSTGRES_USER: wazo
       POSTGRES_PASSWORD: wazo
       POSTGRES_DB: wazo
+  redis:
+    image: redis:5.0-alpine
   router-confd:
     image: wazopbx/wazo-router-confd:latest
     ports:
@@ -33,6 +35,16 @@ services:
       && date"
   rtpe:
     image: wazopbx/wazo-rtpe:latest
+    environment:
+      LISTEN_NG: 22222
+      REDIS: redis:6379/1
+      SUBSCRIBE_KEYSPACE: 2
+  rtpe_secondary:
+    image: wazopbx/wazo-rtpe:latest
+    environment:
+      LISTEN_NG: 22222
+      REDIS: redis:6379/2
+      SUBSCRIBE_KEYSPACE: 1
   sbc:
     image: 'wazopbx/wazo-c4-sbc:latest'
     ports:
@@ -84,7 +96,7 @@ services:
     environment:
       TESTING: 1
       ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
-      RTPENGINE_LIST: udp:rtpe:22222
+      RTPENGINE_LIST: udp:rtpe:22222=1 udp:rtpe_secondary:22222=1
       HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
       HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
       HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
@@ -102,7 +114,7 @@ services:
     environment:
       TESTING: 1
       ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
-      RTPENGINE_LIST: udp:rtpe:22222
+      RTPENGINE_LIST: udp:rtpe:22222=1 udp:rtpe_secondary:22222=1
       HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
       HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
       HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
