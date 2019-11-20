@@ -127,12 +127,6 @@ services:
       DMQ_LISTEN: "udp:eth0:5062"
       DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
-    command: sh -c "
-      date
-      && wait-for -t 60 router-confd:8000
-      && /docker-entrypoint.sh
-      && sleep 5000
-      && date"
   carrier:
     image: 'wazopbx/wazo-c4-carrier:latest'
     entrypoint: 'sipp -sf /scenarios/uas.xml'
