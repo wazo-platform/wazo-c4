@@ -26,8 +26,7 @@ services:
     image: wazopbx/wazo-router-confd:latest
     ports:
     - 8000:8000
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 postgresql:5432
       && wait-for -t 60 consul:8500
       && sleep 15
@@ -35,30 +34,25 @@ services:
       && date"
   rtpe:
     image: wazopbx/wazo-rtpe:latest
+    env_file:
+    - ./envs/common.env
     environment:
-      CONSUL_URI: "consul:8500"
       LISTEN_NG: 22222
-      REDIS: redis:6379/1
       SUBSCRIBE_KEYSPACE: 2
-    command: sh -c "
-      date
-      && echo 'waiting for confd...'
+    command: sh -c "date
       && wait-for -t 120 router-confd:8000
-      && echo 'waiting for consul...'
       && wait-for -t 120 consul:8500
       && sleep 2
-      && echo 'starting up...'
       && /docker-entrypoint.sh
       && date"
   rtpe_secondary:
     image: wazopbx/wazo-rtpe:latest
+    env_file:
+    - ./envs/common.env
     environment:
-      CONSUL_URI: "consul:8500"
       LISTEN_NG: 22222
-      REDIS: redis:6379/2
       SUBSCRIBE_KEYSPACE: 1
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 router-confd:8000
       && wait-for -t 60 consul:8500
       && sleep 2
@@ -68,21 +62,12 @@ services:
     image: 'wazopbx/wazo-c4-sbc:latest'
     ports:
     - "5060:5060/udp"
+    env_file:
+    - ./envs/common.env
+    - ./envs/sbc.env
     environment:
-      TESTING: 1
-      LISTEN: udp:eth0:5060
-      SIP_PORT: 5060
-      WITH_DMQ: 1
-      DISPATCHER_ALG: 8
-      DMQ_PORT: 5062
-      DMQ_LISTEN: "udp:eth0:5062"
-      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
-      CONSUL_URI: "consul:8500"
-      PKG_MEM: "32"
-      SHM_MEM: "512"
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 router-confd:8000
       && wait-for -t 60 consul:8500
       && sleep 2
@@ -90,21 +75,12 @@ services:
       && date"
   sbc_secondary:
     image: 'wazopbx/wazo-c4-sbc:latest'
+    env_file:
+    - ./envs/common.env
+    - ./envs/sbc.env
     environment:
-      TESTING: 1
-      LISTEN: udp:eth0:5060
-      SIP_PORT: 5060
-      WITH_DMQ: 1
-      DISPATCHER_ALG: 8
-      DMQ_PORT: 5062
-      DMQ_LISTEN: "udp:eth0:5062"
-      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
-      CONSUL_URI: "consul:8500"
-      PKG_MEM: "32"
-      SHM_MEM: "512"
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 router-confd:8000
       && wait-for -t 60 consul:8500
       && sleep 2
@@ -114,28 +90,14 @@ services:
     image: 'wazopbx/wazo-c4-router:latest'
     ports:
     - "5061:5061/udp"
+    env_file:
+    - ./envs/common.env
+    - ./envs/router.env
     environment:
-      TESTING: 1
-      ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
-      RTPENGINE_LIST: udp:rtpe:22222=1 udp:rtpe_secondary:22222=1
-      HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
-      HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
-      HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
-      HTTP_API_TIMEOUT: 5000
-      LISTEN: udp:eth0:5061
       LISTEN_ADVERTISE: router:5061
       ALIAS: router_secondary:5061
-      SIP_PORT: 5061
-      CONSUL_URI: "consul:8500"
-      WITH_DMQ: 1
-      DMQ_PORT: 5062
-      DMQ_LISTEN: "udp:eth0:5062"
-      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:router_secondary:5062"
-      PKG_MEM: "32"
-      SHM_MEM: "512"
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 router-confd:8000
       && wait-for -t 60 consul:8500
       && sleep 2
@@ -143,28 +105,14 @@ services:
       && date"
   router_secondary:
     image: 'wazopbx/wazo-c4-router:latest'
+    env_file:
+    - ./envs/common.env
+    - ./envs/router.env
     environment:
-      TESTING: 1
-      ROUTER_AUTH_SECRET: "ROUTER_AUTH_SHARED_SECRET"
-      RTPENGINE_LIST: udp:rtpe:22222=1 udp:rtpe_secondary:22222=1
-      HTTP_API_ROUTING_ENDPOINT: http://router-confd:8000/kamailio/routing
-      HTTP_API_CDR_ENDPOINT: http://router-confd:8000/kamailio/cdr
-      HTTP_API_DBTEXT_UACREG_ENDPOINT: http://router-confd:8000/kamailio/dbtext/uacreg
-      HTTP_API_TIMEOUT: 5000
-      LISTEN: udp:eth0:5061
       LISTEN_ADVERTISE: router_secondary:5061
-      SIP_PORT: 5061
       ALIAS: router:5061
-      CONSUL_URI: "consul:8500"
-      WITH_DMQ: 1
-      DMQ_PORT: 5062
-      DMQ_LISTEN: "udp:eth0:5062"
-      DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
-      PKG_MEM: "32"
-      SHM_MEM: "512"
-    command: sh -c "
-      date
+    command: sh -c "date
       && wait-for -t 60 router-confd:8000
       && wait-for -t 60 consul:8500
       && sleep 2
