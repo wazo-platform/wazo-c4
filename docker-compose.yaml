@@ -36,15 +36,34 @@ services:
   rtpe:
     image: wazopbx/wazo-rtpe:latest
     environment:
+      CONSUL_URI: "consul:8500"
       LISTEN_NG: 22222
       REDIS: redis:6379/1
       SUBSCRIBE_KEYSPACE: 2
+    command: sh -c "
+      date
+      && echo 'waiting for confd...'
+      && wait-for -t 120 router-confd:8000
+      && echo 'waiting for consul...'
+      && wait-for -t 120 consul:8500
+      && sleep 2
+      && echo 'starting up...'
+      && /docker-entrypoint.sh
+      && date"
   rtpe_secondary:
     image: wazopbx/wazo-rtpe:latest
     environment:
+      CONSUL_URI: "consul:8500"
       LISTEN_NG: 22222
       REDIS: redis:6379/2
       SUBSCRIBE_KEYSPACE: 1
+    command: sh -c "
+      date
+      && wait-for -t 60 router-confd:8000
+      && wait-for -t 60 consul:8500
+      && sleep 2
+      && /docker-entrypoint.sh
+      && date"
   sbc:
     image: 'wazopbx/wazo-c4-sbc:latest'
     ports:
@@ -52,42 +71,44 @@ services:
     environment:
       TESTING: 1
       LISTEN: udp:eth0:5060
-      DISPATCHER_LIST: >-
-        # setid(int) destination(sip uri) flags(int,opt) priority(int,opt) attributes(str,opt)\n
-        1 sip:router:5061 16 10\n
-        1 sip:router_secondary:5061 16 5
+      SIP_PORT: 5060
       WITH_DMQ: 1
       DISPATCHER_ALG: 8
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
       DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
+      CONSUL_URI: "consul:8500"
+      PKG_MEM: "32"
+      SHM_MEM: "512"
     command: sh -c "
       date
       && wait-for -t 60 router-confd:8000
+      && wait-for -t 60 consul:8500
+      && sleep 2
       && /docker-entrypoint.sh
-      && sleep 5000
       && date"
   sbc_secondary:
     image: 'wazopbx/wazo-c4-sbc:latest'
     environment:
       TESTING: 1
       LISTEN: udp:eth0:5060
-      DISPATCHER_LIST: >-
-        # setid(int) destination(sip uri) flags(int,opt) priority(int,opt) attributes(str,opt)\n
-        1 sip:router:5061 0 10\n
-        1 sip:router_secondary:5061 0 5
+      SIP_PORT: 5060
       WITH_DMQ: 1
       DISPATCHER_ALG: 8
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
       DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
+      CONSUL_URI: "consul:8500"
+      PKG_MEM: "32"
+      SHM_MEM: "512"
     command: sh -c "
       date
       && wait-for -t 60 router-confd:8000
+      && wait-for -t 60 consul:8500
+      && sleep 2
       && /docker-entrypoint.sh
-      && sleep 5000
       && date"
   router:
     image: 'wazopbx/wazo-c4-router:latest'
@@ -104,11 +125,22 @@ services:
       LISTEN: udp:eth0:5061
       LISTEN_ADVERTISE: router:5061
       ALIAS: router_secondary:5061
+      SIP_PORT: 5061
+      CONSUL_URI: "consul:8500"
       WITH_DMQ: 1
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
       DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:router_secondary:5062"
+      PKG_MEM: "32"
+      SHM_MEM: "512"
+    command: sh -c "
+      date
+      && wait-for -t 60 router-confd:8000
+      && wait-for -t 60 consul:8500
+      && sleep 2
+      && /docker-entrypoint.sh
+      && date"
   router_secondary:
     image: 'wazopbx/wazo-c4-router:latest'
     environment:
@@ -121,12 +153,23 @@ services:
       HTTP_API_TIMEOUT: 5000
       LISTEN: udp:eth0:5061
       LISTEN_ADVERTISE: router_secondary:5061
+      SIP_PORT: 5061
       ALIAS: router:5061
+      CONSUL_URI: "consul:8500"
       WITH_DMQ: 1
       DMQ_PORT: 5062
       DMQ_LISTEN: "udp:eth0:5062"
       DMQ_SERVER_ADDRESS: "sip:eth0:5062"
       DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
+      PKG_MEM: "32"
+      SHM_MEM: "512"
+    command: sh -c "
+      date
+      && wait-for -t 60 router-confd:8000
+      && wait-for -t 60 consul:8500
+      && sleep 2
+      && /docker-entrypoint.sh
+      && date"
   carrier:
     image: 'wazopbx/wazo-c4-carrier:latest'
     entrypoint: 'sipp -sf /scenarios/uas.xml'
