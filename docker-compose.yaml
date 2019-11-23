@@ -16,10 +16,8 @@ services:
     - '5432:5432'
     volumes:
     - ./data/pgsql:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: wazo
-      POSTGRES_PASSWORD: wazo
-      POSTGRES_DB: wazo
+    env_file:
+    - ./envs/common.env
   redis:
     image: redis:5.0-alpine
   router-confd:
@@ -39,12 +37,6 @@ services:
     environment:
       LISTEN_NG: 22222
       SUBSCRIBE_KEYSPACE: 2
-    command: sh -c "date
-      && wait-for -t 120 router-confd:8000
-      && wait-for -t 120 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   rtpe_secondary:
     image: wazopbx/wazo-rtpe:latest
     env_file:
@@ -67,12 +59,6 @@ services:
     - ./envs/sbc.env
     environment:
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
-    command: sh -c "date
-      && wait-for -t 60 router-confd:8000
-      && wait-for -t 60 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   sbc_secondary:
     image: 'wazopbx/wazo-c4-sbc:latest'
     env_file:
@@ -80,12 +66,6 @@ services:
     - ./envs/sbc.env
     environment:
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
-    command: sh -c "date
-      && wait-for -t 60 router-confd:8000
-      && wait-for -t 60 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   router:
     image: 'wazopbx/wazo-c4-router:latest'
     ports:
@@ -97,12 +77,6 @@ services:
       LISTEN_ADVERTISE: router:5061
       ALIAS: router_secondary:5061
       DMQ_NOTIFICATION_ADDRESS: "sip:router_secondary:5062"
-    command: sh -c "date
-      && wait-for -t 60 router-confd:8000
-      && wait-for -t 60 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   router_secondary:
     image: 'wazopbx/wazo-c4-router:latest'
     env_file:
@@ -112,12 +86,6 @@ services:
       LISTEN_ADVERTISE: router_secondary:5061
       ALIAS: router:5061
       DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
-    command: sh -c "date
-      && wait-for -t 60 router-confd:8000
-      && wait-for -t 60 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   carrier:
     image: 'wazopbx/wazo-c4-carrier:latest'
     entrypoint: 'sipp -sf /scenarios/uas.xml'
