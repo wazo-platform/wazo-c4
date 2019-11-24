@@ -44,12 +44,6 @@ services:
     environment:
       LISTEN_NG: 22222
       SUBSCRIBE_KEYSPACE: 1
-    command: sh -c "date
-      && wait-for -t 60 router-confd:8000
-      && wait-for -t 60 consul:8500
-      && sleep 2
-      && /docker-entrypoint.sh
-      && date"
   sbc:
     image: 'wazopbx/wazo-c4-sbc:latest'
     ports:
