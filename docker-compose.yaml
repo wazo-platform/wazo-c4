@@ -43,12 +43,12 @@ services:
       SUBSCRIBE_KEYSPACE: 1
   sbc:
     image: 'wazopbx/wazo-c4-sbc:latest'
-    ports:
-    - "5060:5060/udp"
     env_file:
     - ./envs/common.env
     - ./envs/sbc.env
     environment:
+      LISTEN_ADVERTISE: sbc:5060
+      ALIAS: sbc_secondary:5060
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
   sbc_secondary:
     image: 'wazopbx/wazo-c4-sbc:latest'
@@ -56,6 +56,8 @@ services:
     - ./envs/common.env
     - ./envs/sbc.env
     environment:
+      LISTEN_ADVERTISE: sbc_secondary:5060
+      ALIAS: sbc:5060
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
   router:
     image: 'wazopbx/wazo-c4-router:latest'
