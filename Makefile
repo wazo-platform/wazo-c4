@@ -33,3 +33,4 @@ run-dev:
 .PHONY: stop
 stop:
 	docker-compose down
+	rm -r data

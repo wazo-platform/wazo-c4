@@ -5,22 +5,23 @@ setup:
     store_response: tenant
     payload:
       name: tenant_{random.uuid4}
+      uuid: "{random.uuid4}"
   - type: api
     uri: /domains/
     method: POST
     store_response: domain
     payload:
       domain: domain-{random.uuid4}
-      tenant_id: "{tenant.id}"
+      tenant_uuid: "{tenant.uuid}"
   - type: api
     uri: /ipbx/
     method: POST
     store_response: ipbx
     payload:
       ip_fqdn: carrier
-      tenant_id: "{tenant.id}"
+      tenant_uuid: "{tenant.uuid}"
       domain_id: "{domain.id}"
-      customer: "{tenant.id}"
+      customer: "{domain.id}"
       username: user
       password: pass
       registered: False
@@ -30,14 +31,14 @@ setup:
     store_response: carrier
     payload:
       name: carrier_{random.uuid4}
-      tenant_id: "{tenant.id}"
+      tenant_uuid: "{tenant.uuid}"
   - type: api
     uri: /carrier_trunks/
     method: POST
     store_response: carrier_trunk
     payload:
       name: carrier_trunk_{random.uuid4}
-      tenant_id: "{tenant.id}"
+      tenant_uuid: "{tenant.uuid}"
       carrier_id: "{carrier.id}"
       sip_proxy: proxy.somedomain.com
       ip_address: "{ipaddr.ip}"
@@ -55,14 +56,14 @@ setup:
     store_response: did
     payload:
       did_regex: ^39040[0-9]+
-      tenant_id: "{tenant.id}"
+      tenant_uuid: "{tenant.uuid}"
       ipbx_id: "{ipbx.id}"
       carrier_trunk_id: "{carrier_trunk.id}"
 
 teardown:
   - type: api
     method: DELETE
-    uri: "/tenants/{tenant.id}"
+    uri: "/tenants/{tenant.uuid}"
 
 workers:
   - scenario: "test_did_ko.xml"

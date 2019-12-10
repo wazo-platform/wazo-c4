@@ -34,7 +34,7 @@ services:
     - "../wazo-c4-router/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
   carrier:
     volumes:
-    - "../wazo-c4-carrier/scenarios/:/scenarios/"
+    - "../wazo-c4-carrier/sipp/scenarios/:/scenarios/"
   wazo-tester:
     volumes:
     - "./tests/:/tests/"
