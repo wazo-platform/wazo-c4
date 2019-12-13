@@ -7,7 +7,6 @@
     <![CDATA[
 
       INVITE sip:[service]@[remote_ip]:[remote_port] SIP/2.0
-      X-Forwarded-For: 172.20.0.13:5060
       Record-Route: <sip:sbc;lr=on;ftag=1;did=f4c.a6b2>
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
       From: sipp <sip:sipp@[local_ip]:[local_port]>;tag=[call_number]
