@@ -26,7 +26,7 @@ services:
     - 8000:8000
     env_file:
     - ./envs/common.env
-    command: "wazo-router-confd --host 0.0.0.0 --port 8000 --advertise-host router-confd --advertise-port 8000 --consul-uri http://consul:8500 --database-uri postgresql://wazo:wazo@postgresql:5432/wazo"
+    command: "wazo-router-confd --host 0.0.0.0 --port 8000 --advertise-host router-confd --advertise-port 8000 --consul-uri http://consul:8500 --database-uri postgresql://wazo:wazo@postgresql:5432/wazo --redis-uri redis://redis"
   rtpe:
     image: wazopbx/wazo-rtpe:latest
     env_file:
