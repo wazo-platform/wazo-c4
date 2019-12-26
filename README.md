@@ -43,5 +43,5 @@ Please refer to our testing tool called [wazo-tester](https://github.com/wazo-pl
 
 ## Forcing pike off for stress testing purpose
 ```
-docker exec -it wazo-c4_sbc_1 kamcmd pv.shvSet pike_off int 1
+$ docker exec -it wazo-c4_sbc_1 kamcmd pv.shvSet pike_off int 1
 ```

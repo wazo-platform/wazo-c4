@@ -1,5 +1,13 @@
 version: '2'
 services:
+  consul:
+    volumes:
+    - "./data/consul:/data"
+    - "./config:/config"
+    command: agent -server -data-dir=/data -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
+  postgresql:
+    volumes:
+    - "./data/pgsql:/var/lib/postgresql/data"
   sbc:
     volumes:
     - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
