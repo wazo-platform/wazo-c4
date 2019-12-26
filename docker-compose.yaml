@@ -6,16 +6,11 @@ services:
     - '8300:8300'
     - '8500:8500'
     - '8600:8600'
-    volumes:
-    - ./data/consul:/data
-    - ./config:/config
-    command: agent -server -data-dir=/data -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
   postgresql:
     image: postgres:11
     ports:
     - '5432:5432'
-    volumes:
-    - ./data/pgsql:/var/lib/postgresql/data
     env_file:
     - ./envs/common.env
   redis:
