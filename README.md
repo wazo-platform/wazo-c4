@@ -26,7 +26,7 @@ We provide security functionalities such as SIP sanity checks, blocking the deni
 
 ## Run the development version
 
-The development override `docker-compse.dev.yaml` allows you to edit the configuration files and get the changes reflected inside the contains using volume mounts.
+The development override `docker-compose.dev.yaml` allows you to edit the configuration files and get the changes reflected inside the contains using volume mounts.
 
 ```
 $ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d

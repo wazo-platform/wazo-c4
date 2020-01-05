@@ -20,6 +20,8 @@ services:
     - ./envs/common.env
   redis:
     image: redis:5.0-alpine
+    ports:
+    - '6379:6379'
   router-confd:
     image: wazopbx/wazo-router-confd:latest
     ports:
@@ -48,6 +50,8 @@ services:
     env_file:
     - ./envs/common.env
     - ./envs/sbc.env
+    ports:
+    - "5060:5060/udp"
     environment:
       LISTEN_ADVERTISE: sbc:5060
       ALIAS: sbc_secondary:5060
@@ -63,8 +67,6 @@ services:
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
   router:
     image: 'wazopbx/wazo-c4-router:latest'
-    ports:
-    - "5061:5061/udp"
     env_file:
     - ./envs/common.env
     - ./envs/router.env
