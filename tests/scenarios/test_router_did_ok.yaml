@@ -1,20 +1,20 @@
 setup:
   - type: api
-    uri: /tenants/
+    uri: /1.0/tenants
     method: POST
     store_response: tenant
     payload:
       name: tenant_{random.uuid4}
       uuid: "{random.uuid4}"
   - type: api
-    uri: /domains/
+    uri: /1.0/domains
     method: POST
     store_response: domain
     payload:
       domain: domain-{random.uuid4}
       tenant_uuid: "{tenant.uuid}"
   - type: api
-    uri: /ipbx/
+    uri: /1.0/ipbx
     method: POST
     store_response: ipbx
     payload:
@@ -26,14 +26,14 @@ setup:
       password: pass
       registered: False
   - type: api
-    uri: /carriers/
+    uri: /1.0/carriers
     method: POST
     store_response: carrier
     payload:
       name: carrier_{random.uuid4}
       tenant_uuid: "{tenant.uuid}"
   - type: api
-    uri: /carrier_trunks/
+    uri: /1.0/carrier_trunks
     method: POST
     store_response: carrier_trunk
     payload:
@@ -51,7 +51,7 @@ setup:
       expire_seconds: 1800
       retry_seconds: 10
   - type: api
-    uri: /dids/
+    uri: /1.0/dids
     method: POST
     store_response: did
     payload:
