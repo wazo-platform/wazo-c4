@@ -14,7 +14,7 @@ setup:
       domain: "{ipaddr.ip}"
       tenant_uuid: "{tenant.uuid}"
   - type: api
-    uri: /1.0/ipbx
+    uri: /1.0/ipbxs
     method: POST
     store_response: ipbx
     payload:
