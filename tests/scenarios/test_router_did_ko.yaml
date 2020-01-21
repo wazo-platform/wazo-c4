@@ -63,7 +63,7 @@ setup:
 teardown:
   - type: api
     method: DELETE
-    uri: "/tenants/{tenant.uuid}"
+    uri: "/1.0/tenants/{tenant.uuid}"
 
 workers:
   - scenario: "test_router_did_ko.xml"
