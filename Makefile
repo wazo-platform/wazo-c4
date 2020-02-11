@@ -34,3 +34,11 @@ run-dev:
 stop:
 	docker-compose down
 	rm -r data
+
+.PHONY: start-auth
+start-auth:
+	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml up -d
+
+.PHONY: stop-auth
+stop-auth:
+	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml down
