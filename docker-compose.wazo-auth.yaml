@@ -1,29 +1,17 @@
 version: '2'
 services:
-  consul:
-    image: consul:1.6
-    ports:
-    - '8300:8300'
-    - '8500:8500'
-    - '8600:8600'
-    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
-  postgresql:
-    image: postgres:11
-    ports:
-    - '5432:5432'
-    env_file:
-    - ./envs/common.env
-  redis:
-    image: redis:5.0-alpine
-    ports:
-    - '6379:6379'
   nginx:
-    image: 'wazo/nginx-ssl:latest'
+      image: 'wazo/nginx-ssl:latest'
+      ports:
+      - "80:80"
+      - "443:443"
+      volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  wazo-auth:
+    image: 'wazopbx/wazo-auth-mock:latest'
+    command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]
     ports:
-    - "80:80"
-    - "443:443"
-    volumes:
-    - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - '9497:9497'
   wazo-router-confd:
     image: wazopbx/wazo-router-confd:latest
     command: "wazo-router-confd \
@@ -35,92 +23,6 @@ services:
         --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
         --redis-uri redis://redis \
         --wazo-auth \
-        --debug \
         --wazo-auth-url https://wazo-auth:9497/api/auth/0.1"
     ports:
     - 9600:9600
-  router-confd:
-    image: wazopbx/wazo-router-confd:latest
-    ports:
-    - 8000:8000
-    env_file:
-    - ./envs/common.env
-    command: "wazo-router-confd \
-        --host 0.0.0.0 --port 8000 \
-        --advertise-host router-confd \
-        --advertise-port 8000 \
-        --consul-uri http://consul:8500 \
-        --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
-        --redis-uri redis://redis"
-  rtpe:
-    image: wazopbx/wazo-rtpe:latest
-    env_file:
-    - ./envs/common.env
-    - ./envs/rtpe.env
-    environment:
-      LISTEN_NG: 22222
-      SUBSCRIBE_KEYSPACE: 2
-  rtpe_secondary:
-    image: wazopbx/wazo-rtpe:latest
-    env_file:
-    - ./envs/common.env
-    - ./envs/rtpe.env
-    environment:
-      LISTEN_NG: 22222
-      SUBSCRIBE_KEYSPACE: 1
-  sbc:
-    image: 'wazopbx/wazo-c4-sbc:latest'
-    env_file:
-    - ./envs/common.env
-    - ./envs/sbc.env
-    ports:
-    - "5060:5060/udp"
-    environment:
-      LISTEN_ADVERTISE: sbc:5060
-      ALIAS: sbc_secondary:5060
-      DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
-  sbc_secondary:
-    image: 'wazopbx/wazo-c4-sbc:latest'
-    env_file:
-    - ./envs/common.env
-    - ./envs/sbc.env
-    environment:
-      LISTEN_ADVERTISE: sbc_secondary:5060
-      ALIAS: sbc:5060
-      DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
-  router:
-    image: 'wazopbx/wazo-c4-router:latest'
-    env_file:
-    - ./envs/common.env
-    - ./envs/router.env
-    environment:
-      LISTEN_ADVERTISE: router:5061
-      ALIAS: router_secondary:5061
-      DMQ_NOTIFICATION_ADDRESS: "sip:router_secondary:5062"
-      DISPATCHER_WEIGHT: 10
-  router_secondary:
-    image: 'wazopbx/wazo-c4-router:latest'
-    env_file:
-    - ./envs/common.env
-    - ./envs/router.env
-    environment:
-      LISTEN_ADVERTISE: router_secondary:5061
-      ALIAS: router:5061
-      DMQ_NOTIFICATION_ADDRESS: "sip:router:5062"
-      DISPATCHER_WEIGHT: 5
-  carrier:
-    image: 'wazopbx/wazo-c4-carrier:latest'
-    entrypoint: 'sipp -sf /scenarios/uas.xml'
-  wazo-tester:
-    image: 'wazopbx/wazo-tester:latest'
-    environment:
-      API_ENDPOINT: http://router-confd:8000
-      TARGET: sbc:5060
-    volumes:
-    - "./tests/:/tests/"
-    command: sh -c "while true; do sleep 30; done;"
-  wazo-auth:
-    image: 'wazopbx/wazo-auth-mock:latest'
-    command: ["/usr/local/bin/wazo-auth-mock.py", "9497", "/api/auth"]
-    ports:
-      - '9497:9497'

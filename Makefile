@@ -37,8 +37,8 @@ stop:
 
 .PHONY: start-auth
 start-auth:
-	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml up -d
+	docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml up -d
 
 .PHONY: stop-auth
 stop-auth:
-	docker-compose -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml down
+	docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml down
