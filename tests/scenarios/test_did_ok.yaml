@@ -5,7 +5,7 @@ setup:
     store_response: tenant
     payload:
       name: tenant_{random.uuid4}
-      uuid: ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3
+      uuid: "{random.uuid4}"
   - type: api
     uri: /1.0/domains
     method: POST
