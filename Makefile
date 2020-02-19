@@ -34,3 +34,15 @@ run-dev:
 stop:
 	docker-compose down
 	rm -r data
+
+.PHONY: start-auth
+start-auth:
+	docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml up -d
+
+.PHONY: auth-setup
+auth-setup:
+	docker exec wazo-c4_wazo-tester_1 wazotester /tests/wazo-auth/init_auth.yaml -a https://wazo-auth:9497
+
+.PHONY: stop-auth
+stop-auth:
+	docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml down

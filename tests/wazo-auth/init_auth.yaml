@@ -1,0 +1,33 @@
+setup:
+  - type: api
+    uri: /api/auth/_set_token
+    method: POST
+    https_verify: False
+    payload:
+      auth_id: uuid-multitenant
+      metadata:
+        pbx_user_uuid: uuid-multitenant
+        tenant_uuid: ffffffff-ffff-4c1c-ad1c-ffffffffffff
+        uuid: uuid-multitenant
+      token: valid-token-multitenant
+  - type: api
+    uri: /api/auth/_set_tenants
+    method: POST
+    https_verify: False
+    raw_payload: [
+      {
+          "name": "valid-tenant1",
+          "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
+          "uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff"
+      },
+      {
+          "name": "valid-tenant2",
+          "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
+          "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee2"
+      },
+      {
+          "name": "valid-tenant3",
+          "parent_uuid": "ffffffff-ffff-4c1c-ad1c-ffffffffffff",
+          "uuid": "ffffffff-ffff-4c1c-ad1c-eeeeeeeeeee3"
+      }
+    ]

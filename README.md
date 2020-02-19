@@ -31,6 +31,21 @@ The development override `docker-compose.dev.yaml` allows you to edit the config
 ```
 $ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
 ```
+
+## Run with wazo-auth for wazo portal integration
+
+Using the C4 with Wazo's portal is easy in dev mode running the C4 repo with:
+```
+$ make start-auth
+```
+
+When everything is up and running insert the required tenants with:
+```
+$ make auth-setup
+```
+
+Now connect to the local C4 instance in the portal interface and you can insert the required routing data via the UI.
+
 ## Tests
 
 Running the tests once the C4 in docker compose is up and running is pretty simple:
