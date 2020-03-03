@@ -56,7 +56,7 @@ teardown:
     method: DELETE
     uri: "/1.0/tenants/{tenant.uuid}"
   - type: kamailio_xhttp
-    uri: http://router:8000/rpc
+    uri: http://router:9600/rpc
     method: POST
     payload:
       jsonrpc: "2.0"
@@ -82,7 +82,7 @@ workers:
       to_domain: "{domain.domain}"
       to_port: "5060"
   - type: kamailio_xhttp
-    uri: http://router:8000/rpc
+    uri: http://router:9600/rpc
     method: POST
     payload:
       jsonrpc: "2.0"

@@ -20,13 +20,13 @@ services:
   router-confd:
     image: wazopbx/wazo-router-confd:latest
     ports:
-    - 8000:8000
+    - 9600:9600
     env_file:
     - ./envs/common.env
     command: "wazo-router-confd \
-        --host 0.0.0.0 --port 8000 \
+        --host 0.0.0.0 --port 9600 \
         --advertise-host router-confd \
-        --advertise-port 8000 \
+        --advertise-port 9600 \
         --consul-uri http://consul:8500 \
         --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
         --redis-uri redis://redis"
@@ -92,7 +92,7 @@ services:
   wazo-tester:
     image: 'wazopbx/wazo-tester:latest'
     environment:
-      API_ENDPOINT: http://router-confd:8000
+      API_ENDPOINT: http://router-confd:9600
       TARGET: sbc:5060
     volumes:
     - "./tests/:/tests/"

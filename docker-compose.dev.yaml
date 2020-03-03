@@ -1,10 +1,7 @@
 version: '2'
 services:
   consul:
-    volumes:
-    - "./data/consul:/data"
-    - "./config:/config"
-    command: agent -server -data-dir=/data -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
   postgresql:
     volumes:
     - "./data/pgsql:/var/lib/postgresql/data"
