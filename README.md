@@ -37,7 +37,7 @@ $ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
 To run the plaform using wazo-auth :
 
 ```
-docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml up -d
+docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml up -d --force-recreate -V
 ```
 
 Using the C4 with Wazo's portal is easy in dev mode running the C4 repo with:
