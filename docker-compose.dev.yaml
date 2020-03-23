@@ -7,36 +7,36 @@ services:
     - "./data/pgsql:/var/lib/postgresql/data"
   sbc:
     volumes:
-    - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
-    - "../wazo-c4-sbc/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
-    - "../wazo-c4-sbc/docker-entrypoint.sh:/docker-entrypoint.sh"
-    - "../wazo-c4-sbc/consul-templates:/consul-templates"
-    - "../wazo-c4-sbc/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
+    - "../wazo-c4-router/kamailio/kamailio-sbc.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-router/kamailio/xhttp-sbc.cfg:/etc/kamailio/xhttp-sbc.cfg"
+    - "../wazo-c4-router/docker-entrypoint-sbc.sh:/docker-entrypoint.sh"
+    - "../wazo-c4-router/consul-templates/sbc:/consul-templates/sbc"
+    - "../wazo-c4-router/supervisord/supervisord-sbc.conf:/etc/supervisor/conf.d/supervisord.conf"
   sbc_secondary:
     volumes:
-    - "../wazo-c4-sbc/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
-    - "../wazo-c4-sbc/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
-    - "../wazo-c4-sbc/docker-entrypoint.sh:/docker-entrypoint.sh"
-    - "../wazo-c4-sbc/consul-templates:/consul-templates"
-    - "../wazo-c4-sbc/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
+    - "../wazo-c4-router/kamailio/kamailio-sbc.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-router/kamailio/xhttp-sbc.cfg:/etc/kamailio/xhttp-sbc.cfg"
+    - "../wazo-c4-router/docker-entrypoint-sbc.sh:/docker-entrypoint.sh"
+    - "../wazo-c4-router/consul-templates/sbc:/consul-templates/sbc"
+    - "../wazo-c4-router/supervisord/supervisord-sbc.conf:/etc/supervisor/conf.d/supervisord.conf"
   router:
     volumes:
-    - "../wazo-c4-router/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-router/kamailio/kamailio-router.cfg:/etc/kamailio/kamailio.cfg"
     - "../wazo-c4-router/kamailio/routing.cfg:/etc/kamailio/routing.cfg"
     - "../wazo-c4-router/kamailio/cdrs.cfg:/etc/kamailio/cdrs.cfg"
-    - "../wazo-c4-router/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
-    - "../wazo-c4-router/docker-entrypoint.sh:/docker-entrypoint.sh"
-    - "../wazo-c4-router/consul-templates:/consul-templates"
-    - "../wazo-c4-router/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
+    - "../wazo-c4-router/kamailio/xhttp-router.cfg:/etc/kamailio/xhttp-router.cfg"
+    - "../wazo-c4-router/docker-entrypoint-router.sh:/docker-entrypoint-router.sh"
+    - "../wazo-c4-router/consul-templates/router:/consul-templates/router"
+    - "../wazo-c4-router/supervisord/supervisord-router.conf:/etc/supervisor/conf.d/supervisord.conf"
   router_secondary:
     volumes:
-    - "../wazo-c4-router/kamailio/kamailio.cfg:/etc/kamailio/kamailio.cfg"
+    - "../wazo-c4-router/kamailio/kamailio-router.cfg:/etc/kamailio/kamailio.cfg"
     - "../wazo-c4-router/kamailio/routing.cfg:/etc/kamailio/routing.cfg"
     - "../wazo-c4-router/kamailio/cdrs.cfg:/etc/kamailio/cdrs.cfg"
-    - "../wazo-c4-router/kamailio/xhttp.cfg:/etc/kamailio/xhttp.cfg"
-    - "../wazo-c4-router/docker-entrypoint.sh:/docker-entrypoint.sh"
-    - "../wazo-c4-router/consul-templates:/consul-templates"
-    - "../wazo-c4-router/supervisord/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf"
+    - "../wazo-c4-router/kamailio/xhttp-router.cfg:/etc/kamailio/xhttp-router.cfg"
+    - "../wazo-c4-router/docker-entrypoint-router.sh:/docker-entrypoint-router.sh"
+    - "../wazo-c4-router/consul-templates/router:/consul-templates/router"
+    - "../wazo-c4-router/supervisord/supervisord-router.conf:/etc/supervisor/conf.d/supervisord.conf"
   carrier:
     volumes:
     - "../wazo-c4-carrier/sipp/scenarios/:/scenarios/"
