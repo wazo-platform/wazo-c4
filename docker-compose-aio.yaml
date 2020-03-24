@@ -1,0 +1,81 @@
+version: '2'
+services:
+  consul:
+    image: consul:1.6
+    ports:
+    - '8300:8300'
+    - '8500:8500'
+    - '8600:8600'
+    command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
+  postgresql:
+    image: postgres:11
+    ports:
+    - '5432:5432'
+    env_file:
+    - ./envs/common.env
+  redis:
+    image: redis:5.0-alpine
+    ports:
+    - '6379:6379'
+  router-confd:
+    image: wazopbx/wazo-router-confd:latest
+    ports:
+    - 9600:9600
+    env_file:
+    - ./envs/common.env
+    command: "wazo-router-confd \
+        --host 0.0.0.0 --port 9600 \
+        --advertise-host router-confd \
+        --advertise-port 9600 \
+        --consul-uri http://consul:8500 \
+        --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
+        --redis-uri redis://redis"
+  rtpe:
+    image: wazopbx/wazo-rtpe:latest
+    env_file:
+    - ./envs/common.env
+    - ./envs/rtpe.env
+    environment:
+      LISTEN_NG: 22222
+      SUBSCRIBE_KEYSPACE: 2
+  rtpe_secondary:
+    image: wazopbx/wazo-rtpe:latest
+    env_file:
+    - ./envs/common.env
+    - ./envs/rtpe.env
+    environment:
+      LISTEN_NG: 22222
+      SUBSCRIBE_KEYSPACE: 1
+  aio:
+    image: 'wazopbx/wazo-c4-aio:latest'
+    env_file:
+    - ./envs/common.env
+    - ./envs/aio.env
+    ports:
+    - "5060:5060/udp"
+    environment:
+      LISTEN_ADVERTISE: aio:5060
+      ALIAS: aio_secondary:5060
+      DMQ_NOTIFICATION_ADDRESS: "sip:aio_secondary:5062"
+      DISPATCHER_WEIGHT: 10
+  aio_secondary:
+    image: 'wazopbx/wazo-c4-aio:latest'
+    env_file:
+    - ./envs/common.env
+    - ./envs/aio.env
+    environment:
+      LISTEN_ADVERTISE: aio_secondary:5060
+      ALIAS: aio:5060
+      DMQ_NOTIFICATION_ADDRESS: "sip:aio:5062"
+      DISPATCHER_WEIGHT: 5
+  carrier:
+    image: 'wazopbx/wazo-c4-carrier:latest'
+    entrypoint: 'sipp -sf /scenarios/uas.xml'
+  wazo-tester:
+    image: 'wazopbx/wazo-tester:latest'
+    environment:
+      API_ENDPOINT: http://router-confd:9600
+      TARGET: aio:5060
+    volumes:
+    - "./tests/:/tests/"
+    command: sh -c "while true; do sleep 30; done;"
