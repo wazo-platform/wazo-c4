@@ -57,10 +57,11 @@ Now connect to the local C4 instance in the portal interface and you can insert 
 Running the tests once the C4 in docker compose is up and running is pretty simple:
 
 ```
-$ docker exec wazo-c4_wazo-tester_1 pytest /tests/
+$ docker exec wazo-c4_wazo-tester_1 pytest -v /tests/
 ```
 
 Please refer to our testing tool called [wazo-tester](https://github.com/wazo-platform/wazo-tester) written in Python able to set up the Wazo environment, perform testing or stress testing with parallel sipp workers and custom scenarios for further info on how the tests work.
+If you want to test the all in one SBC, you need to add specific option in test `̀̀``pytest -v -k " not router and not failover" /tests/```
 
 ## Forcing pike off for stress testing purpose
 ```
