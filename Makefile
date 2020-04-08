@@ -1,4 +1,3 @@
-
 venv:
 	virtualenv -p python3 venv --no-site-packages
 
@@ -36,6 +35,4 @@ auth-setup:
 stop-auth:
 	docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml -f docker-compose.dev.yaml down
 
-.PHONY:
-	setup run-test flake8 black pikeoff	run	run-dev	stop start-auth	auth-setup stop-auth
-
+.PHONY: setup run-test flake8 black pikeoff run run-dev	stop start-auth	auth-setup stop-auth

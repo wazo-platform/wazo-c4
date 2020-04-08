@@ -28,7 +28,7 @@ We provide security functionalities such as SIP sanity checks, blocking the deni
 
 The development override `docker-compose.dev.yaml` allows you to edit the configuration files and get the changes reflected inside the contains using volume mounts.
 
-```
+```ShellSession
 $ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
 ```
 
@@ -36,17 +36,17 @@ $ docker-compose -f docker-compose.yaml -f docker-compose.dev.yaml up -d
 
 To run the plaform using wazo-auth :
 
-```
-docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml up -d --force-recreate -V
+```ShellSession
+$ docker-compose -f docker-compose.yaml -f docker-compose.wazo-auth.yaml up -d --force-recreate -V
 ```
 
 Using the C4 with Wazo's portal is easy in dev mode running the C4 repo with:
-```
+```ShellSession
 $ make start-auth
 ```
 
 When everything is up and running insert the required tenants with:
-```
+```ShellSession
 $ make auth-setup
 ```
 
@@ -56,16 +56,22 @@ Now connect to the local C4 instance in the portal interface and you can insert 
 
 Running the tests once the C4 in docker compose is up and running is pretty simple:
 
-```
-$ docker exec wazo-c4_wazo-tester_1 pytest -v /tests/
+```ShellSession
+$ docker-compose exec wazo-tester pytest -v /tests/
 ```
 
 Please refer to our testing tool called [wazo-tester](https://github.com/wazo-platform/wazo-tester) written in Python able to set up the Wazo environment, perform testing or stress testing with parallel sipp workers and custom scenarios for further info on how the tests work.
-If you want to test the all in one SBC, you need to add specific option in test `̀̀``pytest -v -k " not router and not failover" /tests/```
+
+If you want to test the all in one SBC (using `docker-compose-aio.yaml`), you need to add specific options to select tests like:
+
+```ShellSession
+$ docker-compose -f docker-compose-aio.yaml exec wazo-tester pytest -v pytest -v -k " not router and not failover" /tests/
+```
 
 ## Forcing pike off for stress testing purpose
-```
-$ docker exec wazo-c4_sbc_1 kamcmd pv.shvSet pike_off int 1
+
+```ShellSession
+$ docker-compose exec sbc kamcmd pv.shvSet pike_off int 1
 ```
 
 ## For new test in development platform, do not forget to clean postgresql db
