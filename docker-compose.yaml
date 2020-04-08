@@ -2,23 +2,27 @@ version: '2'
 services:
   consul:
     image: consul:1.6
-    ports:
-    - '8300:8300'
-    - '8500:8500'
-    - '8600:8600'
+    expose:
+    - '8300'
+    - '8500'
+    - '8600'
     command: agent -server -bind 0.0.0.0 -client 0.0.0.0 -bootstrap-expect=1 -ui
   postgresql:
     image: postgres:11
-    ports:
-    - '5432:5432'
+    expose:
+    - '5432'
     env_file:
     - ./envs/common.env
   redis:
     image: redis:5.0-alpine
-    ports:
-    - '6379:6379'
+    expose:
+    - '6379'
   router-confd:
     image: wazopbx/wazo-router-confd:latest
+    depends_on:
+      - consul
+      - redis
+      - postgresql
     ports:
     - 9600:9600
     env_file:
@@ -91,6 +95,8 @@ services:
     entrypoint: 'sipp -sf /scenarios/uas.xml'
   wazo-tester:
     image: 'wazopbx/wazo-tester:latest'
+    depends_on:
+      - router-confd
     environment:
       API_ENDPOINT: http://router-confd:9600
       TARGET: sbc:5060
