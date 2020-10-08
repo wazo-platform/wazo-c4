@@ -18,7 +18,7 @@ services:
     ports:
     - '6379:6379'
   router-confd:
-    image: wazopbx/wazo-router-confd:latest
+    image: wazoplatform/wazo-router-confd:latest
     ports:
     - 9600:9600
     env_file:
@@ -31,7 +31,7 @@ services:
         --database-uri postgresql://wazo:wazo@postgresql:5432/wazo \
         --redis-uri redis://redis"
   rtpe:
-    image: wazopbx/wazo-rtpe:latest
+    image: wazoplatform/wazo-rtpe:latest
     env_file:
     - ./envs/common.env
     - ./envs/rtpe.env
@@ -39,7 +39,7 @@ services:
       LISTEN_NG: 22222
       SUBSCRIBE_KEYSPACE: 2
   rtpe_secondary:
-    image: wazopbx/wazo-rtpe:latest
+    image: wazoplatform/wazo-rtpe:latest
     env_file:
     - ./envs/common.env
     - ./envs/rtpe.env
@@ -47,7 +47,7 @@ services:
       LISTEN_NG: 22222
       SUBSCRIBE_KEYSPACE: 1
   sbc:
-    image: 'wazopbx/wazo-c4-aio:latest'
+    image: 'wazoplatform/wazo-c4-aio:latest'
     env_file:
     - ./envs/common.env
     - ./envs/aio.env
@@ -59,7 +59,7 @@ services:
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc_secondary:5062"
       DISPATCHER_WEIGHT: 10
   sbc_secondary:
-    image: 'wazopbx/wazo-c4-aio:latest'
+    image: 'wazoplatform/wazo-c4-aio:latest'
     env_file:
     - ./envs/common.env
     - ./envs/aio.env
@@ -69,10 +69,10 @@ services:
       DMQ_NOTIFICATION_ADDRESS: "sip:sbc:5062"
       DISPATCHER_WEIGHT: 5
   carrier:
-    image: 'wazopbx/wazo-c4-carrier:latest'
+    image: 'wazoplatform/wazo-c4-carrier:latest'
     entrypoint: 'sipp -sf /scenarios/uas.xml'
   wazo-tester:
-    image: 'wazopbx/wazo-tester:latest'
+    image: 'wazoplatform/wazo-tester:latest'
     environment:
       API_ENDPOINT: http://router-confd:9600
       TARGET: sbc:5060
