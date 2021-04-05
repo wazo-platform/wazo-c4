@@ -75,4 +75,5 @@ $ docker-compose exec sbc kamcmd pv.shvSet pike_off int 1
 ```
 
 ## For new test in development platform, do not forget to clean postgresql db
+
 To be sure do not have old data on db, remove in data/pgsql !
